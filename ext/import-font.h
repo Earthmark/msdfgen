@@ -1,6 +1,8 @@
 
 #pragma once
 
+#ifdef MSDFGEN_USE_FT
+
 #include <cstdlib>
 #include "../core/Shape.h"
 
@@ -65,3 +67,5 @@ bool getKerning(double &output, FontHandle *font, GlyphIndex glyphIndex1, GlyphI
 bool getKerning(double &output, FontHandle *font, unicode_t unicode1, unicode_t unicode2);
 
 }
+
+#endif

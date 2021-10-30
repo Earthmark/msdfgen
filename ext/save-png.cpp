@@ -1,6 +1,8 @@
 
 #include "save-png.h"
 
+#ifdef MSDFGEN_USE_PNG
+
 #include <cstring>
 #include <lodepng.h>
 #include "../core/pixel-conversion.hpp"
@@ -63,3 +65,5 @@ bool savePng(const BitmapConstRef<float, 4> &bitmap, const char *filename) {
 }
 
 }
+
+#endif

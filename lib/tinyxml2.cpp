@@ -1,3 +1,4 @@
+#ifdef MSDFGEN_USE_SVG
 /*
 Original code by Lee Thomason (www.grinninglizard.com)
 
@@ -2835,3 +2836,4 @@ bool XMLPrinter::Visit( const XMLUnknown& unknown )
 }
 
 }   // namespace tinyxml2
+#endif /*MSDFGEN_USE_SVG*/

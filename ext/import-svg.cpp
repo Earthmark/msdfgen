@@ -1,3 +1,4 @@
+#ifdef MSDFGEN_USE_SVG
 
 #define _USE_MATH_DEFINES
 #define _CRT_SECURE_NO_WARNINGS
@@ -308,3 +309,5 @@ bool loadSvgShape(Shape &output, const char *filename, int pathIndex, Vector2 *d
 }
 
 }
+
+#endif

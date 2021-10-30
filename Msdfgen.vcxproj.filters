@@ -18,6 +18,9 @@
     <Filter Include="Source Dependencies">
       <UniqueIdentifier>{42db228a-5d46-439c-ad30-7595a74d635f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Dynamic Library">
+      <UniqueIdentifier>{0bb0bd48-7f37-4fa8-b97f-4c37acec2de0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="core\arithmetics.hpp">
@@ -129,6 +132,9 @@
     <ClInclude Include="core\MSDFErrorCorrection.h">
       <Filter>Core</Filter>
     </ClInclude>
+    <ClInclude Include="dll_exports.h">
+      <Filter>Dynamic Library</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -214,6 +220,9 @@
     </ClCompile>
     <ClCompile Include="core\MSDFErrorCorrection.cpp">
       <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="dll_api.cpp">
+      <Filter>Dynamic Library</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
