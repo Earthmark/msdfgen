@@ -2,13 +2,17 @@
 #include "msdfgen-ext.h"
 #include "dll_exports.h"
 
+#include "core/ShapeDistanceFinder.h"
+
 using namespace msdfgen;
 
 template <int N>
 static void invertColor(const BitmapRef<float, N>& bitmap) {
 	const float* end = bitmap.pixels + N * bitmap.width * bitmap.height;
 	for (float* p = bitmap.pixels; p < end; ++p)
+	{
 		*p = 1.f - *p;
+	}
 }
 
 DLL_EXPORT Shape* DLL_API create_shape()
@@ -25,7 +29,11 @@ DLL_EXPORT void DLL_API free_shape(Shape* shape)
 
 DLL_EXPORT void DLL_API shape_bounds(Shape* shape, double& left, double& bottom, double& right, double& top)
 {
-	shape->bound(left, bottom, right, top);
+	Shape::Bounds bounds = shape->getBounds();
+	left = bounds.l;
+	bottom = bounds.b;
+	right = bounds.r;
+	top = bounds.t;
 }
 
 DLL_EXPORT void DLL_API shape_edge_coloring_simple(Shape* shape, double angleThreshold, unsigned long long seed)
@@ -65,24 +73,21 @@ DLL_EXPORT void DLL_API shape_generateMSDF(float* pixels, int width, int height,
 
 	BitmapRef<float, 3> msdf = BitmapRef<float, 3>(pixels, width, height);
 
-	Vector2 scale = Vector2(scaleX, scaleY);
-	Vector2 translate = Vector2(offsetX, offsetY);
+	Projection projection = Projection(Vector2(scaleX, scaleY), Vector2(offsetX, offsetY));
+	MSDFGeneratorConfig config;
+	config.errorCorrection.mode = ErrorCorrectionConfig::EDGE_PRIORITY;
+	config.errorCorrection.distanceCheckMode = ErrorCorrectionConfig::CHECK_DISTANCE_AT_EDGE;
+	// TODO: Include edgeThreshold inside config.errorCorrection, as that feature is currently not implemented
+	// and there's no documentation as to what the intent was.
 
-	generateMSDF(msdf, *shape, range, scale, translate);
+	generateMSDF(msdf, *shape, projection, range, config);
 
-	// Auto fix shapes with reversed winding
-	Point2 p(-100000, -100000);
-	double dummy;
-	SignedDistance minDistance;
-	for (std::vector<Contour>::const_iterator contour = shape->contours.begin(); contour != shape->contours.end(); ++contour)
-		for (std::vector<EdgeHolder>::const_iterator edge = contour->edges.begin(); edge != contour->edges.end(); ++edge) {
-			SignedDistance distance = (*edge)->signedDistance(p, dummy);
-			if (distance < minDistance)
-				minDistance = distance;
-		}
-
-	if (minDistance.distance > 0)
-		invertColor<3>(msdf);
-
-	distanceSignCorrection(msdf, *shape, scale, translate, FILL_NONZERO);
+	// Get sign of signed distance outside bounds
+	// This was taken from main.cpp as a way to guess the expected orientation.
+	Shape::Bounds bounds = shape->getBounds();
+	Point2 p(bounds.l - (bounds.r - bounds.l) - 1, bounds.b - (bounds.t - bounds.b) - 1);
+	double distance = SimpleTrueShapeDistanceFinder::oneShotDistance(*shape, p);
+	if (distance >= 0) {
+		invertColor(msdf);
+	}
 }
