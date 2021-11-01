@@ -85,12 +85,13 @@ PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
 
-if(MSDFGEN_WITH_FREETYPE)
+if(MSDFGEN_USE_FREETYPE)
     if(NOT TARGET Freetype::Freetype)
         find_package(Freetype REQUIRED)
     endif()
     target_link_libraries(msdfgen-ext PUBLIC Freetype::Freetype)
-    target_compile_definitions(msdfgen PUBLIC MSDFGEN_USE_FREETYPE)
+    target_compile_definitions(msdfgen-ext PUBLIC MSDFGEN_USE_FREETYPE)
+    target_compile_definitions(msdfgen-core PUBLIC MSDFGEN_USE_FREETYPE)
 
     if(FREETYPE_WITH_PNG)
         find_package(ZLIB REQUIRED)
