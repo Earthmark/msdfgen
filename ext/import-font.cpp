@@ -1,6 +1,8 @@
 
 #include "import-font.h"
 
+#ifdef MSDFGEN_USE_FREETYPE
+
 #include <cstdlib>
 #include <queue>
 #include <ft2build.h>
@@ -220,3 +222,5 @@ bool getKerning(double &output, FontHandle *font, unicode_t unicode1, unicode_t 
 }
 
 }
+
+#endif

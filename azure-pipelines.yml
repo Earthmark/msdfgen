@@ -1,0 +1,79 @@
+trigger:
+- neos-release
+
+strategy:
+  matrix:
+    linux:
+      imageName: 'ubuntu-latest'
+      sourceFolder: ''
+      sourceFile: 'libmsdfgen.so'
+      targetFile: 'libmsdfgen.so'
+      artifactName : 'linux_x64'
+    windows:
+      imageName: 'windows-latest'
+      sourceFolder: 'x64/Release DLL/'
+      sourceFile: 'msdfgen.dll'
+      targetFile: 'msdfgen.dll'
+      artifactName : 'windows_x64'
+
+pool:
+  vmImage: $(imageName)
+
+steps:
+
+- task: VSBuild@1
+  inputs:
+    solution: 'Msdfgen.sln'
+    vsVersion: '16.0'
+    platform: 'x64'
+    configuration: 'Release DLL'
+    msbuildArchitecture: 'x64'
+  condition: eq( variables['Agent.OS'], 'Windows_NT' )
+
+- task: CMake@1
+  inputs:
+    workingDirectory: 
+    cmakeArgs: 'CMakeLists.txt -G "Unix Makefiles"'
+  condition: eq( variables['Agent.OS'], 'Linux' )
+
+- task: Bash@3
+  inputs:
+    targetType: 'inline'
+    script: |
+      make
+      tree
+  condition: eq( variables['Agent.OS'], 'Linux' )
+
+- task: CopyFiles@2
+  inputs:
+    SourceFolder: '$(sourceFolder)'
+    Contents: '$(sourceFile)'
+    TargetFolder: '$(build.artifactstagingdirectory)'
+
+
+- task: PublishBuildArtifacts@1
+  inputs:
+    PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+    ArtifactName: '$(artifactName)'
+    publishLocation: 'Container'
+
+- task: PowerShell@2
+  inputs:
+    targetType: 'inline'
+    script: '$(ANDROID_NDK_PATH)/ndk-build'
+  condition: eq( variables['Agent.OS'], 'Windows_NT' )
+
+- task: CopyFiles@2
+  inputs:
+    SourceFolder: 'libs/armeabi-v7a'
+    Contents: 'libmsdfgen.so'
+    TargetFolder: '$(build.artifactstagingdirectory)'
+    CleanTargetFolder: true
+  condition: eq( variables['Agent.OS'], 'Windows_NT' )
+
+- task: PublishBuildArtifacts@1
+  inputs:
+    PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+    ArtifactName: 'android_ARMv7'
+    publishLocation: 'Container'
+  condition: eq( variables['Agent.OS'], 'Windows_NT' )
