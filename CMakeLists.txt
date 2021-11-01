@@ -2,20 +2,16 @@ cmake_minimum_required(VERSION 3.10)
 
 project(msdfgen VERSION 1.9 LANGUAGES CXX)
 option(MSDFGEN_BUILD_STANDALONE "Build the msdfgen standalone executable" ON)
+option(MSDFGEN_BUILD_SHARED_LIBRARY "Build msdfgen as a shared library" OFF)
+option(MSDFGEN_INSTALL "Generate installation target" ON)
 option(MSDFGEN_USE_OPENMP "Build with OpenMP support for multithreaded code" OFF)
 option(MSDFGEN_USE_CPP11 "Build with C++11 enabled" ON)
 option(MSDFGEN_USE_SKIA "Build with the Skia library" OFF)
-option(MSDFGEN_INSTALL "Generate installation target" ON)
-option(MSDFGEN_WITH_FREETYPE "If the library should be built referencing freetype" ON)
+option(MSDFGEN_USE_FREETYPE "Build with the Freetype library" ON)
 option(FREETYPE_WITH_PNG "Link libpng and zlib because FreeType is configured to require it" OFF)
 option(FREETYPE_WITH_HARFBUZZ "Link HarfBuzz because FreeType is configured to require it" OFF)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
-add_definitions(-DMSDFGEN_DLL)
-
-if(NOT TARGET Freetype::Freetype AND MSDFGEN_WITH_FREETYPE)
-    find_package(Freetype REQUIRED)
-endif()
 
 file(GLOB_RECURSE msdfgen-core_HEADERS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
     "core/*.h"
@@ -75,9 +71,6 @@ add_library(msdfgen-ext ${msdfgen-ext_SOURCES} ${msdfgen-ext_PUBLIC_HEADERS} ${m
 add_library(msdfgen::msdfgen-ext ALIAS msdfgen-ext)
 set_target_properties(msdfgen-ext PROPERTIES PUBLIC_HEADER "${msdfgen-ext_PUBLIC_HEADERS}")
 target_link_libraries(msdfgen-ext PUBLIC msdfgen::msdfgen-core)
-if(MSDFGEN_WITH_FREETYPE)
-    target_link_libraries(msdfgen-ext PUBLIC Freetype::Freetype)
-endif()
 target_include_directories(msdfgen-ext
 PUBLIC
     $<INSTALL_INTERFACE:include/msdfgen>
@@ -86,15 +79,23 @@ PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
 
-if(FREETYPE_WITH_PNG)
-    find_package(ZLIB REQUIRED)
-    find_package(PNG REQUIRED)
-    target_link_libraries(msdfgen-ext PUBLIC ZLIB::ZLIB PNG::PNG)
-endif()
-if(FREETYPE_WITH_HARFBUZZ)
-    # No FindHarfBuzz.cmake available so falling back to CMAKE_LIBRARY_PATH
-    find_library(FREETYPE_HARFBUZZ_LIB "harfbuzz")
-    target_link_libraries(msdfgen-ext PUBLIC "${FREETYPE_HARFBUZZ_LIB}")
+if(MSDFGEN_WITH_FREETYPE)
+    if(NOT TARGET Freetype::Freetype)
+        find_package(Freetype REQUIRED)
+    endif()
+    target_link_libraries(msdfgen-ext PUBLIC Freetype::Freetype)
+    target_compile_definitions(msdfgen PUBLIC MSDFGEN_USE_FREETYPE)
+
+    if(FREETYPE_WITH_PNG)
+        find_package(ZLIB REQUIRED)
+        find_package(PNG REQUIRED)
+        target_link_libraries(msdfgen-ext PUBLIC ZLIB::ZLIB PNG::PNG)
+    endif()
+    if(FREETYPE_WITH_HARFBUZZ)
+        # No FindHarfBuzz.cmake available so falling back to CMAKE_LIBRARY_PATH
+        find_library(FREETYPE_HARFBUZZ_LIB "harfbuzz")
+        target_link_libraries(msdfgen-ext PUBLIC "${FREETYPE_HARFBUZZ_LIB}")
+    endif()
 endif()
 
 if(MSDFGEN_USE_SKIA)
@@ -107,6 +108,12 @@ endif()
 if(MSDFGEN_BUILD_STANDALONE)
     add_executable(msdfgen main.cpp)
     target_compile_definitions(msdfgen PUBLIC MSDFGEN_STANDALONE)
+    target_link_libraries(msdfgen PUBLIC msdfgen::msdfgen-core msdfgen::msdfgen-ext)
+endif()
+
+if(MSDFGEN_BUILD_SHARED_LIBRARY)
+    add_library(msdfgen SHARED dll_api.cpp)
+    target_compile_definitions(msdfgen PUBLIC MSDFGEN_BUILD_SHARED_LIBRARY)
     target_link_libraries(msdfgen PUBLIC msdfgen::msdfgen-core msdfgen::msdfgen-ext)
 endif()
 
