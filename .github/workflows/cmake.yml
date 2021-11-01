@@ -41,5 +41,5 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: ${{matrix.config.artifact}}
-        path: ${{github.workspace}}/build/release/${{matrix.config.artifact}}
+        path: ${{github.workspace}}/build/bin/Release/${{matrix.config.artifact}}
       
