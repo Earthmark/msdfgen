@@ -23,8 +23,6 @@ distribution.
 
 #include "tinyxml2.h"
 
-#ifdef MSDFGEN_USE_SVG
-
 #include <new>		// yes, this one new style header, is in the Android SDK.
 #if defined(ANDROID_NDK) || defined(__BORLANDC__) || defined(__QNXNTO__)
 #   include <stddef.h>
@@ -2837,4 +2835,3 @@ bool XMLPrinter::Visit( const XMLUnknown& unknown )
 }
 
 }   // namespace tinyxml2
-#endif /*MSDFGEN_USE_SVG*/

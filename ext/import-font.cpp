@@ -1,7 +1,7 @@
 
 #include "import-font.h"
 
-#ifdef MSDFGEN_USE_FT
+#ifdef MSDFGEN_USE_FREETYPE
 
 #include <cstdlib>
 #include <queue>

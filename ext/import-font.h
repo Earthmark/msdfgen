@@ -1,7 +1,7 @@
 
 #pragma once
 
-#ifdef MSDFGEN_USE_FT
+#ifdef MSDFGEN_USE_FREETYPE
 
 #include <cstdlib>
 #include "../core/Shape.h"

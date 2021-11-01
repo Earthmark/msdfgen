@@ -1,8 +1,6 @@
 
 #pragma once
 
-#ifdef MSDFGEN_USE_SVG
-
 #include <cstdlib>
 #include "../core/Shape.h"
 
@@ -15,5 +13,3 @@ bool buildShapeFromSvgPath(Shape &shape, const char *pathDef, double endpointSna
 bool loadSvgShape(Shape &output, const char *filename, int pathIndex = 0, Vector2 *dimensions = NULL);
 
 }
-
-#endif

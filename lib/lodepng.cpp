@@ -30,8 +30,6 @@ Rename this file to lodepng.cpp to use it for C++, or to lodepng.c to use it for
 
 #include "lodepng.h"
 
-#ifdef MSDFGEN_USE_PNG
-
 #include <limits.h> /* LONG_MAX */
 #include <stdio.h> /* file handling */
 #include <stdlib.h> /* allocations */
@@ -5992,4 +5990,3 @@ unsigned encode(const std::string& filename,
 #endif /* LODEPNG_COMPILE_PNG */
 } /* namespace lodepng */
 #endif /*LODEPNG_COMPILE_CPP*/
-#endif /*MSDFGEN_USE_PNG*/

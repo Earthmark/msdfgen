@@ -1,8 +1,6 @@
 
 #pragma once
 
-#ifdef MSDFGEN_USE_PNG
-
 #include "../core/BitmapRef.hpp"
 
 namespace msdfgen {
@@ -16,5 +14,3 @@ bool savePng(const BitmapConstRef<float, 3> &bitmap, const char *filename);
 bool savePng(const BitmapConstRef<float, 4> &bitmap, const char *filename);
 
 }
-
-#endif

@@ -6,13 +6,14 @@ option(MSDFGEN_USE_OPENMP "Build with OpenMP support for multithreaded code" OFF
 option(MSDFGEN_USE_CPP11 "Build with C++11 enabled" ON)
 option(MSDFGEN_USE_SKIA "Build with the Skia library" OFF)
 option(MSDFGEN_INSTALL "Generate installation target" ON)
+option(MSDFGEN_WITH_FREETYPE "If the library should be built referencing freetype" ON)
 option(FREETYPE_WITH_PNG "Link libpng and zlib because FreeType is configured to require it" OFF)
 option(FREETYPE_WITH_HARFBUZZ "Link HarfBuzz because FreeType is configured to require it" OFF)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 add_definitions(-DMSDFGEN_DLL)
 
-if(NOT TARGET Freetype::Freetype)
+if(NOT TARGET Freetype::Freetype AND MSDFGEN_WITH_FREETYPE)
     find_package(Freetype REQUIRED)
 endif()
 
@@ -73,7 +74,10 @@ endif()
 add_library(msdfgen-ext ${msdfgen-ext_SOURCES} ${msdfgen-ext_PUBLIC_HEADERS} ${msdfgen-ext_PRIVATE_HEADERS} "./msdfgen-ext.h")
 add_library(msdfgen::msdfgen-ext ALIAS msdfgen-ext)
 set_target_properties(msdfgen-ext PROPERTIES PUBLIC_HEADER "${msdfgen-ext_PUBLIC_HEADERS}")
-target_link_libraries(msdfgen-ext PUBLIC msdfgen::msdfgen-core Freetype::Freetype)
+target_link_libraries(msdfgen-ext PUBLIC msdfgen::msdfgen-core)
+if(MSDFGEN_WITH_FREETYPE)
+    target_link_libraries(msdfgen-ext PUBLIC Freetype::Freetype)
+endif()
 target_include_directories(msdfgen-ext
 PUBLIC
     $<INSTALL_INTERFACE:include/msdfgen>
