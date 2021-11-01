@@ -11,6 +11,8 @@ option(MSDFGEN_USE_FREETYPE "Build with the Freetype library" ON)
 option(FREETYPE_WITH_PNG "Link libpng and zlib because FreeType is configured to require it" OFF)
 option(FREETYPE_WITH_HARFBUZZ "Link HarfBuzz because FreeType is configured to require it" OFF)
 
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
 file(GLOB_RECURSE msdfgen-core_HEADERS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
