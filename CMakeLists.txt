@@ -10,6 +10,7 @@ option(FREETYPE_WITH_PNG "Link libpng and zlib because FreeType is configured to
 option(FREETYPE_WITH_HARFBUZZ "Link HarfBuzz because FreeType is configured to require it" OFF)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
+add_definitions(-DMSDFGEN_DLL)
 
 if(NOT TARGET Freetype::Freetype)
     find_package(Freetype REQUIRED)
@@ -18,10 +19,12 @@ endif()
 file(GLOB_RECURSE msdfgen-core_HEADERS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
     "core/*.h"
     "core/*.hpp"
+    "dll_exports.h"
 )
 
 file(GLOB_RECURSE msdfgen-core_SOURCES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
     "core/*.cpp"
+	"dll_api.cpp"
 )
 
 file(GLOB_RECURSE msdfgen-ext_PUBLIC_HEADERS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}

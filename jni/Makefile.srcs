@@ -1,0 +1,3 @@
+SRCS = ../core/contour-combiners.cpp ../core/Contour.cpp ../core/edge-coloring.cpp ../core/edge-segments.cpp ../core/edge-selectors.cpp ../core/EdgeHolder.cpp ../core/equation-solver.cpp ../core/estimate-sdf-error.cpp ../core/rasterization.cpp ../core/render-sdf.cpp ../core/Scanline.cpp ../core/shape-description.cpp ../core/Shape.cpp ../core/SignedDistance.cpp ../core/Vector2.cpp ../dll_api.cpp ../core/msdfgen.cpp
+
+

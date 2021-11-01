@@ -1,4 +1,3 @@
-#ifdef MSDFGEN_USE_SVG
 /*
 Original code by Lee Thomason (www.grinninglizard.com)
 
@@ -23,6 +22,8 @@ distribution.
 */
 
 #include "tinyxml2.h"
+
+#ifdef MSDFGEN_USE_SVG
 
 #include <new>		// yes, this one new style header, is in the Android SDK.
 #if defined(ANDROID_NDK) || defined(__BORLANDC__) || defined(__QNXNTO__)
