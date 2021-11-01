@@ -1,0 +1,18 @@
+LOCAL_PATH := $(call my-dir)
+
+LOCAL_SHORT_COMMANDS := true
+
+include $(LOCAL_PATH)/Makefile.srcs
+
+include $(CLEAR_VARS)
+LOCAL_MODULE := msdfgen
+LOCAL_C_INCLUDES += $(LOCAL_PATH)/../core
+LOCAL_ARM_MODE := arm
+
+LOCAL_SRC_FILES += $(SRCS)
+LOCAL_LDLIBS := -llog
+LOCAL_CPP_FEATURES := rtti exceptions
+LOCAL_CFLAGS += -O3 -DMSDFGEN_DLL -DANDROID -DANDROID_NDK
+LOCAL_CPPFLAGS += -O3
+
+include $(BUILD_SHARED_LIBRARY)
