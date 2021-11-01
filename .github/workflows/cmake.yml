@@ -24,7 +24,7 @@ jobs:
           }
         - {
             name: Linux,
-            artifact: msdfgen.so,
+            artifact: libmsdfgen.so,
             os: ubuntu-latest,
           }
 
