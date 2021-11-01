@@ -20,11 +20,13 @@ jobs:
         - {
             name: Windows,
             artifact: msdfgen.dll,
+            artifact-path: Release/msdfgen.dll,
             os: windows-latest,
           }
         - {
             name: Linux,
             artifact: libmsdfgen.so,
+            artifact-path: libmsdfgen.so,
             os: ubuntu-latest,
           }
 
@@ -41,5 +43,5 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: ${{matrix.config.artifact}}
-        path: ${{github.workspace}}/build/bin/Release/${{matrix.config.artifact}}
+        path: ${{github.workspace}}/build/out/${{matrix.config.artifact-path}}
       
