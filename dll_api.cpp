@@ -74,20 +74,16 @@ DLL_EXPORT void DLL_API shape_generateMSDF(float* pixels, int width, int height,
 	BitmapRef<float, 3> msdf = BitmapRef<float, 3>(pixels, width, height);
 
 	Projection projection = Projection(Vector2(scaleX, scaleY), Vector2(offsetX, offsetY));
-	MSDFGeneratorConfig config;
-	config.errorCorrection.mode = ErrorCorrectionConfig::EDGE_PRIORITY;
-	config.errorCorrection.distanceCheckMode = ErrorCorrectionConfig::CHECK_DISTANCE_AT_EDGE;
+	MSDFGeneratorConfig generatorConfig;
+	MSDFGeneratorConfig postErrorCorrectionConfig(generatorConfig);
+	generatorConfig.errorCorrection.mode = ErrorCorrectionConfig::DISABLED;
+	postErrorCorrectionConfig.errorCorrection.distanceCheckMode = ErrorCorrectionConfig::CHECK_DISTANCE_AT_EDGE;
 	// TODO: Include edgeThreshold inside config.errorCorrection, as that feature is currently not implemented
 	// and there's no documentation as to what the intent was.
 
-	generateMSDF(msdf, *shape, projection, range, config);
+	generateMSDF(msdf, *shape, projection, range, generatorConfig);
 
-	// Get sign of signed distance outside bounds
-	// This was taken from main.cpp as a way to guess the expected orientation.
-	Shape::Bounds bounds = shape->getBounds();
-	Point2 p(bounds.l - (bounds.r - bounds.l) - 1, bounds.b - (bounds.t - bounds.b) - 1);
-	double distance = SimpleTrueShapeDistanceFinder::oneShotDistance(*shape, p);
-	if (distance >= 0) {
-		invertColor(msdf);
-	}
+	// This call is where the errors are introduced, but it corrects the inversion.
+	distanceSignCorrection(msdf, *shape, projection, FILL_NONZERO);
+	msdfErrorCorrection(msdf, *shape, projection, range, postErrorCorrectionConfig);
 }
