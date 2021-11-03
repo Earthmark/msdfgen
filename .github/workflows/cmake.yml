@@ -33,7 +33,7 @@ jobs:
             name: Android,
             artifact: android-armeabi-v7a-libmsdfgen.so,
             artifact-path: libmsdfgen.so,
-            cmakeArgs: -DCMAKE_TOOLCHAIN_FILE=android.toolchain.cmake -DCMAKE_ANDROID_ARCH_ABI=armeabi-v7a,
+            cmakeArgs: -DCMAKE_TOOLCHAIN_FILE=$ANDROID_SDK_ROOT/build/cmake/android.toolchain.cmake -DCMAKE_ANDROID_ARCH_ABI=armeabi-v7a,
             os: ubuntu-latest,
           }
 
