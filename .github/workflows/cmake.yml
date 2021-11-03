@@ -19,22 +19,31 @@ jobs:
         config:
         - {
             name: Windows,
-            artifact: msdfgen.dll,
+            artifact: windows-x64-msdfgen.dll,
             artifact-path: Release/msdfgen.dll,
+            cmakeArgs: ''
             os: windows-latest,
           }
         - {
             name: Linux,
-            artifact: libmsdfgen.so,
+            artifact: linux-x64-libmsdfgen.so,
             artifact-path: libmsdfgen.so,
+            cmakeArgs: ''
             os: ubuntu-latest,
+          }
+        - {
+            name: Android,
+            artifact: android-armeabi-v7a-libmsdfgen.so,
+            artifact-path: libmsdfgen.so,
+            cmakeArgs: -DCMAKE_TOOLCHAIN_FILE=android.toolchain.cmake -DANDROID_ABI=armeabi-v7a
+            os: windows-latest,
           }
 
     steps:
     - uses: actions/checkout@v2
 
     - name: Configure CMake
-      run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -S ${{github.workspace}} -DMSDFGEN_BUILD_SHARED_LIBRARY=ON -DMSDFGEN_BUILD_STANDALONE=OFF -DMSDFGEN_USE_FREETYPE=OFF -DMSDFGEN_INSTALL=OFF
+      run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -S ${{github.workspace}} -DMSDFGEN_BUILD_SHARED_LIBRARY=ON -DMSDFGEN_BUILD_STANDALONE=OFF -DMSDFGEN_USE_FREETYPE=OFF -DMSDFGEN_INSTALL=OFF ${{matrix.config.cmakeArgs}}
 
     - name: Build
       run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
