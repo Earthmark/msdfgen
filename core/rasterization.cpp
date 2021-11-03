@@ -49,13 +49,14 @@ static void multiDistanceSignCorrection(const BitmapRef<float, N> &sdf, const Sh
             float sd = median(msd[0], msd[1], msd[2]);
             if (sd == .5f)
                 ambiguous = true;
+                *match = 1;
             else if ((sd > .5f) != fill) {
                 msd[0] = 1.f-msd[0];
                 msd[1] = 1.f-msd[1];
                 msd[2] = 1.f-msd[2];
-                *match = -1;
+                *match = 0;
             } else
-                *match = 1;
+                *match = 2;
             if (N >= 4 && (msd[3] > .5f) != fill)
                 msd[3] = 1.f-msd[3];
             ++match;
@@ -67,18 +68,18 @@ static void multiDistanceSignCorrection(const BitmapRef<float, N> &sdf, const Sh
         int row = shape.inverseYAxis ? h-y-1 : y;
         for (int x = 0; x < w; ++x) {
             int neighborMatch = 0;
-            if (x > 0) neighborMatch += *(match-1);
-            if (x < w-1) neighborMatch += *(match+1);
-            if (y > 0) neighborMatch += *(match-w);
-            if (y < h-1) neighborMatch += *(match+w);
-            if (!*match) {
+            if (x > 0) neighborMatch += *(match-1) - 1;
+            if (x < w-1) neighborMatch += *(match+1) - 1;
+            if (y > 0) neighborMatch += *(match-w) - 1;
+            if (y < h-1) neighborMatch += *(match+w) - 1;
+            if (*match == 0) {
                 if (neighborMatch < 0) {
                     float *msd = sdf(x, row);
                     msd[0] = 1.f-msd[0];
                     msd[1] = 1.f-msd[1];
                     msd[2] = 1.f-msd[2];
                 }
-            } else if (*match == -1) {
+            } else if (*match == 0) {
                 // If we did flip, but a significant number of neighbors didn't, unflip.
                 // This resolves artifacts that can sometimes occur along edges,
                 // in particular the jp u character as found in one case.
