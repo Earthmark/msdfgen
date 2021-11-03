@@ -19,19 +19,19 @@ jobs:
         config:
         - {
             name: Windows,
-            artifact: windows-x64-msdfgen.dll,
+            artifact: windows-x64/msdfgen.dll,
             artifact-path: Release/msdfgen.dll,
             os: windows-latest,
           }
         - {
             name: Linux,
-            artifact: linux-x64-libmsdfgen.so,
+            artifact: linux-x64/libmsdfgen.so,
             artifact-path: libmsdfgen.so,
             os: ubuntu-latest,
           }
         - {
             name: Android,
-            artifact: android-armeabi-v7a-libmsdfgen.so,
+            artifact: android-armeabi-v7a/libmsdfgen.so,
             artifact-path: libmsdfgen.so,
             cmakeArgs: -DCMAKE_SYSTEM_NAME=Android -DCMAKE_ANDROID_ARCH_ABI=armeabi-v7a,
             os: ubuntu-latest,
