@@ -19,14 +19,21 @@ jobs:
         config:
         - {
             name: Windows,
-            artifact: msdfgen.dll,
+            artifact: windows-x64-msdfgen.dll,
             artifact-path: Release/msdfgen.dll,
             os: windows-latest,
           }
         - {
             name: Linux,
-            artifact: libmsdfgen.so,
+            artifact: linux-x64-libmsdfgen.so,
             artifact-path: libmsdfgen.so,
+            os: ubuntu-latest,
+          }
+        - {
+            name: Android,
+            artifact: android-armeabi-v7a-libmsdfgen.so,
+            artifact-path: libmsdfgen.so,
+            cmakeArgs: -DCMAKE_SYSTEM_NAME=Android -DCMAKE_ANDROID_ARCH_ABI=armeabi-v7a,
             os: ubuntu-latest,
           }
 
@@ -34,14 +41,14 @@ jobs:
     - uses: actions/checkout@v2
 
     - name: Configure CMake
-      run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -S ${{github.workspace}} -DMSDFGEN_BUILD_SHARED_LIBRARY=ON -DMSDFGEN_BUILD_STANDALONE=OFF -DMSDFGEN_USE_FREETYPE=OFF -DMSDFGEN_INSTALL=OFF
+      run: cmake -B build ${{matrix.config.cmakeArgs}} -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DMSDFGEN_BUILD_SHARED_LIBRARY=ON -DMSDFGEN_BUILD_STANDALONE=OFF -DMSDFGEN_USE_FREETYPE=OFF -DMSDFGEN_INSTALL=OFF -S .
 
     - name: Build
-      run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
+      run: cmake --build build --config ${{env.BUILD_TYPE}}
 
     - name: Upload binary
       uses: actions/upload-artifact@v2
       with:
         name: ${{matrix.config.artifact}}
-        path: ${{github.workspace}}/build/out/${{matrix.config.artifact-path}}
+        path: build/out/${{matrix.config.artifact-path}}
       

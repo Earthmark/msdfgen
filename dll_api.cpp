@@ -90,10 +90,9 @@ DLL_EXPORT void DLL_API shape_generateMSDF(float* pixels, int width, int height,
 	double distance = SimpleTrueShapeDistanceFinder::oneShotDistance(*shape, p);
 	if (distance >= 0) {
 		invertColor(msdf);
-	} else {
-		// This call is where the errors are introduced, but it corrects the inversion.
-		distanceSignCorrection(msdf, *shape, projection, FILL_NONZERO);
 	}
-
+	
+	// This call is where the errors are introduced, but it corrects the inversion.
+	distanceSignCorrection(msdf, *shape, projection, FILL_NONZERO);
 	msdfErrorCorrection(msdf, *shape, projection, range, postErrorCorrectionConfig);
 }
