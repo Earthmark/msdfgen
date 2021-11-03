@@ -8,7 +8,7 @@ strategy:
       sourceFolder: 'build/out/'
       sourceFile: 'libmsdfgen.so'
       targetFile: 'libmsdfgen.so'
-      cmakeArgs: -DCMAKE_SYSTEM_NAME=Android -DCMAKE_ANDROID_ARCH_ABI=armeabi-v7a,
+      cmakeArgs: -DCMAKE_SYSTEM_NAME=Android -DCMAKE_ANDROID_ARCH_ABI=armeabi-v7a
       artifactName : 'android_ARMv7'
     linux:
       imageName: 'ubuntu-latest'
