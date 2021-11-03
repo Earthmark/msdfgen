@@ -34,13 +34,6 @@ jobs:
             artifact: android-armeabi-v7a-libmsdfgen.so,
             artifact-path: libmsdfgen.so,
             cmakeArgs: -DCMAKE_SYSTEM_NAME=Android -DCMAKE_ANDROID_ARCH_ABI=armeabi-v7a,
-            os: windows-latest,
-          }
-        - {
-            name: Android on linux,
-            artifact: android-armeabi-v7a-libmsdfgen.so,
-            artifact-path: libmsdfgen.so,
-            cmakeArgs: -DCMAKE_SYSTEM_NAME=Android -DCMAKE_ANDROID_ARCH_ABI=armeabi-v7a,
             os: ubuntu-latest,
           }
 
