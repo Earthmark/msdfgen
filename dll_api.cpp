@@ -83,7 +83,17 @@ DLL_EXPORT void DLL_API shape_generateMSDF(float* pixels, int width, int height,
 
 	generateMSDF(msdf, *shape, projection, range, generatorConfig);
 
-	// This call is where the errors are introduced, but it corrects the inversion.
-	distanceSignCorrection(msdf, *shape, projection, FILL_NONZERO);
+	// Get sign of signed distance outside bounds
+	// This was taken from main.cpp as a way to guess the expected orientation.
+	Shape::Bounds bounds = shape->getBounds();
+	Point2 p(bounds.l - (bounds.r - bounds.l) - 1, bounds.b - (bounds.t - bounds.b) - 1);
+	double distance = SimpleTrueShapeDistanceFinder::oneShotDistance(*shape, p);
+	if (distance >= 0) {
+		invertColor(msdf);
+	} else {
+		// This call is where the errors are introduced, but it corrects the inversion.
+		distanceSignCorrection(msdf, *shape, projection, FILL_NONZERO);
+	}
+
 	msdfErrorCorrection(msdf, *shape, projection, range, postErrorCorrectionConfig);
 }
