@@ -62,26 +62,39 @@ static void multiDistanceSignCorrection(const BitmapRef<float, N> &sdf, const Sh
         }
     }
     // This step is necessary to avoid artifacts when whole shape is inverted
-    if (ambiguous) {
-        match = &matchMap[0];
-        for (int y = 0; y < h; ++y) {
-            int row = shape.inverseYAxis ? h-y-1 : y;
-            for (int x = 0; x < w; ++x) {
-                if (!*match) {
-                    int neighborMatch = 0;
-                    if (x > 0) neighborMatch += *(match-1);
-                    if (x < w-1) neighborMatch += *(match+1);
-                    if (y > 0) neighborMatch += *(match-w);
-                    if (y < h-1) neighborMatch += *(match+w);
-                    if (neighborMatch < 0) {
-                        float *msd = sdf(x, row);
-                        msd[0] = 1.f-msd[0];
-                        msd[1] = 1.f-msd[1];
-                        msd[2] = 1.f-msd[2];
-                    }
+    match = &matchMap[0];
+    for (int y = 0; y < h; ++y) {
+        int row = shape.inverseYAxis ? h-y-1 : y;
+        for (int x = 0; x < w; ++x) {
+            int neighborMatch = 0;
+            if (x > 0) neighborMatch += *(match-1);
+            if (x < w-1) neighborMatch += *(match+1);
+            if (y > 0) neighborMatch += *(match-w);
+            if (y < h-1) neighborMatch += *(match+w);
+            if (!*match) {
+                if (neighborMatch < 0) {
+                    float *msd = sdf(x, row);
+                    msd[0] = 1.f-msd[0];
+                    msd[1] = 1.f-msd[1];
+                    msd[2] = 1.f-msd[2];
                 }
-                ++match;
+            } else if (*match == 1) {
+                // If we did not flip, but 3 neighbors did, flip anyways.
+                // This resolves artifacts that can sometimes occur along edges.
+                if (neighborMatch >= 3) {
+                    float *msd = sdf(x, row);
+                    msd[0] = 1.f-msd[0];
+                    msd[1] = 1.f-msd[1];
+                    msd[2] = 1.f-msd[2];
+                }
+                if (neighborMatch <= -3) {
+                    float *msd = sdf(x, row);
+                    msd[0] = 1.f-msd[0];
+                    msd[1] = 1.f-msd[1];
+                    msd[2] = 1.f-msd[2];
+                }
             }
+            ++match;
         }
     }
 }
