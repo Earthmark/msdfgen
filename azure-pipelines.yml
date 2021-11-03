@@ -29,10 +29,12 @@ pool:
 steps:
 - task: CMake@1
   inputs:
+    workingDirectory: 
     cmakeArgs: '-B build $(cmakeArgs) -DCMAKE_BUILD_TYPE=Release -DMSDFGEN_BUILD_SHARED_LIBRARY=ON -DMSDFGEN_BUILD_STANDALONE=OFF -DMSDFGEN_USE_FREETYPE=OFF -DMSDFGEN_INSTALL=OFF -S .'
 
 - task: CMake@1
   inputs:
+    workingDirectory: 
     cmakeArgs: '--build build --config Release'
 
 - task: CopyFiles@2
