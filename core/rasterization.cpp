@@ -78,21 +78,15 @@ static void multiDistanceSignCorrection(const BitmapRef<float, N> &sdf, const Sh
                     msd[1] = 1.f-msd[1];
                     msd[2] = 1.f-msd[2];
                 }
-            } else if (*match == 1) {
-                // If we did not flip, but 3 neighbors did, flip anyways.
-                // This resolves artifacts that can sometimes occur along edges.
-                if (neighborMatch <= -3) {
-                    float *msd = sdf(x, row);
-                    msd[0] = 1.f-msd[0];
-                    msd[1] = 1.f-msd[1];
-                    msd[2] = 1.f-msd[2];
-                }
             } else if (*match == -1) {
-                if (neighborMatch >= 3) {
+                // If we did flip, but a significant number of neighbors didn't, unflip.
+                // This resolves artifacts that can sometimes occur along edges,
+                // in particular the jp u character as found in one case.
+                if (neighborMatch >= 2) {
                     float *msd = sdf(x, row);
-                    msd[0] = 1.f-msd[0];
-                    msd[1] = 1.f-msd[1];
-                    msd[2] = 1.f-msd[2];
+                    msd[0] = 1.f - msd[0];
+                    msd[1] = 1.f - msd[1];
+                    msd[2] = 1.f - msd[2];
                 }
             }
             ++match;
