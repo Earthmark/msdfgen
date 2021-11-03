@@ -1,0 +1,47 @@
+name: CMake
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+env:
+  BUILD_TYPE: Release
+
+jobs:
+  build:
+    name: ${{matrix.config.name}}
+    runs-on: ${{matrix.config.os}}
+    strategy:
+      fail-fast: false
+      matrix:
+        config:
+        - {
+            name: Windows,
+            artifact: msdfgen.dll,
+            artifact-path: Release/msdfgen.dll,
+            os: windows-latest,
+          }
+        - {
+            name: Linux,
+            artifact: libmsdfgen.so,
+            artifact-path: libmsdfgen.so,
+            os: ubuntu-latest,
+          }
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Configure CMake
+      run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -S ${{github.workspace}} -DMSDFGEN_BUILD_SHARED_LIBRARY=ON -DMSDFGEN_BUILD_STANDALONE=OFF -DMSDFGEN_USE_FREETYPE=OFF -DMSDFGEN_INSTALL=OFF
+
+    - name: Build
+      run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
+
+    - name: Upload binary
+      uses: actions/upload-artifact@v2
+      with:
+        name: ${{matrix.config.artifact}}
+        path: ${{github.workspace}}/build/out/${{matrix.config.artifact-path}}
+      
